@@ -1,54 +1,63 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 class StopWatch extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      count:0
-    }  
-    this.intervalId = null;
-  }
-
-  tick = ()=> this.setState({count: this.state.count+1})
-
-  start = ()=>{
-    if(this.intervalId===null){
-      this.intervalId = setInterval(this.tick,1000);
+    constructor(props) {
+        super(props);
+        this.state = {
+            count: 0,
+            isStarted: false
+        }
+        this.timeoutId = null;
     }
-  }
 
-  stop = () =>{
-    clearInterval(this.intervalId);
-    this.intervalId = null;
-  }
+    tick = () => {
+        this.setState({count: this.state.count + 1})
+        if (this.state.isStarted) {
+            this.stop()
+            this.start()
+        }
+    }
 
-  reset = () =>{
-    this.stop();
-    this.setState({count: 0})
-  }
-    
-  componentDidMount(){
-    this.start()
-  }
+    start = () => {
+        this.setState({isStarted: true})
+        if (this.timeoutId === null) {
+            this.timeoutId = setTimeout(this.tick, 1000);
+        }
+    }
 
-  componentDidUpdate(){
-  }
+    stop = () => {
+        this.setState({isStarted: false})
+        clearTimeout(this.timeoutId);
+        this.timeoutId = null;
+    }
 
-  componentWillUnmount(){
-    this.stop();
-  }
+    reset = () => {
+        this.stop();
+        this.setState({count: 0})
+    }
 
-  render() {
-    const {count} = this.state;
-    return (
-      <article>
-        <h2>{count}</h2>
-        <button onClick={this.start}>start</button>
-        <button onClick={this.stop}>stop</button>
-        <button onClick={this.reset}>reset</button>
-      </article>
-    );
-  }
+    componentDidMount() {
+        this.start()
+    }
+
+    componentDidUpdate() {
+    }
+
+    componentWillUnmount() {
+        this.stop();
+    }
+
+    render() {
+        const {count} = this.state;
+        return (
+            <article>
+                <h2>{count}</h2>
+                <button onClick={this.start}>start</button>
+                <button onClick={this.stop}>stop</button>
+                <button onClick={this.reset}>reset</button>
+            </article>
+        );
+    }
 }
 
 export default StopWatch;
